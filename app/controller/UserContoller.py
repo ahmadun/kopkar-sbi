@@ -6,28 +6,37 @@ from datetime import datetime
 from app import response,db
 from flask import request, jsonify,abort
 from flask_jwt_extended import *
+from werkzeug.security import generate_password_hash
 
 from datetime import timedelta
 
 
-def checkanggota(id):
+def checkmember():
     try:
-        data = Users.query.filter_by(id=id).first()
-        result = users_schema.dump(data)
-        return jsonify(result)
+        nik = request.args.get('nik')
+        print(nik)
+        if (nik!=""):
+            data = Users.query.filter(Users.nik==nik)       
+            result = users_schema.dump(data)
+            return jsonify(result)
+        else:
+            data = Users.query.all()      
+            result = users_schema.dump(data)
+            return jsonify(result)
+
 
     except Exception as e:
         print(e)
 
 def save():
     try:
-        nik = request.form.get('nik')
-        name = request.form.get('name')
-        no_hp = request.form.get('no_hp')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        role = request.form.get('role')
-        created_by = request.form.get('created_by')
+        nik = request.json.get('nik')
+        name = request.json.get('name')
+        no_hp = request.json.get('no_hp')
+        email = request.json.get('email')
+        password = request.json.get('password')
+        role = request.json.get('role')
+        created_by = request.json.get('created_by')
         now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
 
@@ -43,32 +52,35 @@ def save():
 
 def changepwd():
     try:
-        nik = request.form.get('nik')
-        password = request.form.get('password')
-        updated_by = request.form.get('created_by')
+        nik = request.json.get('nik')
+        password = request.json.get('password')
+        updated_by = request.json.get('created_by')
         now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
         data =Users.query.filter_by(nik=nik).first()
-        data.password = password
+        data.password=generate_password_hash(password)
         data.updated_by  = updated_by
         data.updated_at  = now
         db.session.commit()
       
-
-        return response.success([], 'Sucessfully Change Password')
+        return response.success(True, 'Sucessfully Change Password')
     except Exception as e:
         print(e)
 
 def updateuserinfo():
     try:
-        nik = request.form.get('nik')
-        no_hp = request.form.get('no_hp')
-        role = request.form.get('role')
-        email = request.form.get('email')
-        updated_by = request.form.get('updated_by')
+        nik = request.json.get('nik')
+        name = request.json.get('name')
+        no_hp = request.json.get('no_hp')
+        role = request.json.get('role')
+        email = request.json.get('email')
+        updated_by = request.json.get('updated_by')
         now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
+      
+
         data =Users.query.filter_by(nik=nik).first()
+        data.name =name
         data.no_hp = no_hp
         data.role = role
         data.email = email
@@ -76,8 +88,7 @@ def updateuserinfo():
         data.updated_at  = now
         db.session.commit()
       
-
-        return response.success([], 'Sucessfully Update User')
+        return response.success(True, 'Sucessfully Change Profile')
     except Exception as e:
         print(e)
 
@@ -102,7 +113,9 @@ def login():
             return response.badRequest([], 'User Not Registered')
         
         if not user.checkPassword(password):
-            return response.badRequest([], 'Password is wrong!')
+             return response.success({
+                "isAuthenticated":"false"
+            },"Login Failed")
 
     
         data = singleObject(user)

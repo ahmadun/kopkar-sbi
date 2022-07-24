@@ -1,10 +1,8 @@
 from app import db,ma
 from datetime import datetime
 
-class Savings(db.Model):
+class Savings_masters(db.Model):
     nik = db.Column(db.String(20), primary_key=True)
-    period = db.Column(db.String(6),nullable=False)
-    date_save = db.Column(db.DateTime, nullable=False)
     save_mand = db.Column(db.BigInteger)
     save_main = db.Column(db.BigInteger)
     save_volu = db.Column(db.BigInteger)
@@ -14,11 +12,11 @@ class Savings(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<Savings {}>'.format(self.name)
+        return '<Savings_masters {}>'.format(self.name)
 
   
-class SavingsSchema(ma.Schema):
+class Savings_mastersSchema(ma.Schema):
     class Meta:
-        fields = ('nik','period','date_save','save_mand','save_main','save_volu','name')
-saving_schema = SavingsSchema()
-savings_schema = SavingsSchema(many=True)
+        fields = ('nik','save_mand','save_main','save_volu','updated_at','name')
+savings_master_schema = Savings_mastersSchema()
+savings_masters_schema = Savings_mastersSchema(many=True)

@@ -2,7 +2,7 @@ import imp
 
 from flask_cors import cross_origin
 from app import app,response
-from app.controller import UserContoller,CashContoller,BonContoller,CreditController,SalaryContoller,SavingContoller
+from app.controller import UserContoller,CashContoller,BonContoller,CreditController,SalaryContoller,SavingContoller,SavingMasController,SavingMainController
 from flask import request
 from flask import jsonify
 from flask_jwt_extended import jwt_required
@@ -15,17 +15,29 @@ def index():
 
 @app.route('/api/users', methods=['GET', 'POST','PUT'])
 def users():
-    if request.method == 'GET':
-        return UserContoller.index()
     if request.method == 'PUT':
         return UserContoller.updateuserinfo()
     else:
         return UserContoller.save()
 
+
+@app.route('/api/users/pwd', methods=['PUT'])
+def pwd():
+    if request.method == 'PUT':
+        return UserContoller.changepwd()
+    else:
+        return UserContoller.save()
+
 @app.route('/api/login', methods=['POST'])
 def login():
+
     if request.method == 'POST':
         return UserContoller.login()
+
+@app.route('/api/checkmember', methods=['GET'])
+def checkmember():
+    if request.method == 'GET':
+        return UserContoller.checkmember()
 
 @app.route("/api/logout", methods=["POST"])
 def logout():
@@ -79,10 +91,34 @@ def salarys():
     elif request.method == 'POST':
         return SalaryContoller.save()
 
+@app.route('/api/uploadsalary', methods=['POST'])
+def uploadsalary():
+    if request.method == 'POST':
+        return SalaryContoller.upload()
+
+@app.route('/api/savingmaster', methods=['GET','POST'])
+def savingmaster():
+    if request.method == 'GET':
+        return SavingMasController.index()
+    elif request.method == 'POST':
+        return SavingMasController.save()
+
+@app.route('/api/uploadsavingmaster', methods=['POST'])
+def uploadsavingmaster():
+    if request.method == 'POST':
+        return SavingMasController.upload()
+
 @app.route('/api/saving/<nik>', methods=['GET'])
 def saving(nik):
     if request.method == 'GET':
         return SavingContoller.index(nik)
+
+@app.route('/api/savingmain', methods=['GET','POST'])
+def savingmain():
+    if request.method == 'GET':
+        return SavingMainController.index()
+    if request.method == 'POST':
+        return SavingMainController.save()
 
 
 

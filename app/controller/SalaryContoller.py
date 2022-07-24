@@ -11,7 +11,7 @@ from app.model.users import Users,users_schema
 
 def index():
     try:
-        nik = request.form.get('nik')
+        nik = request.args.get('nik')
         if nik=='':
             data = Salarys.query.join(Users, Salarys.nik==Users.nik).add_columns(Salarys.nik, Users.name, Salarys.basic_salary, Salarys.last_salary, Salarys.last_month_pay)
             result = salarys_schema.dump(data)
@@ -27,13 +27,15 @@ def index():
 
 def save():
     try:
-        nik = request.form.get('nik')
-        basic_salary = request.form.get('basic_salary')
-        last_salary = request.form.get('last_salary')
-        last_month_pay = request.form.get('last_month_pay')
-        created_by = request.form.get('created_by')
+        nik = request.json.get('nik')
+        basic_salary = request.json.get('basic_salary').replace(',','')
+        last_salary = request.json.get('last_salary').replace(',','')
+        last_month_pay = request.json.get('last_month_pay')
+        created_by = request.json.get('created_by')
         created_at = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-        mode = request.form.get('mode')
+        mode = request.json.get('mode')
+
+        print(basic_salary)
         if mode==1:
             data = Salarys.query.filter_by(nik=nik).first()
             data.nik=nik
@@ -43,12 +45,12 @@ def save():
             data.created_by=created_by
             data.created_at=created_at
             db.session.commit()
-            return response.success([], 'Sucesfully Update Data')         
+            return response.success(True, 'Sucesfully Update Data')         
         else:
             data = Salarys(nik=nik,basic_salary=basic_salary, last_salary=last_salary, last_month_pay=last_month_pay,created_by=created_by,created_at=created_at)
             db.session.add(data)
             db.session.commit()
-            return response.success([], 'Sucesfully Add Data')
+            return response.success(True, 'Sucesfully Add Data')
             
 
     except Exception as e:
@@ -62,7 +64,7 @@ def upload():
         for i in req:
              stream.append((i['nik'],i['basic_salary'],i['last_salary'],i['last_month_pay'],i['created_by'],now))
        
-        db.engine.execute('insert into salarys (nik,basic_salary,last_salary,last_month_pay,created_by,created_at) VALUES {}'.format(str(stream)[1:-1]))
+        print('insert into salarys (nik,basic_salary,last_salary,last_month_pay,created_by,created_at) VALUES {}'.format(str(stream)[1:-1]))
         db.session.commit()
             
 
