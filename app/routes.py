@@ -72,10 +72,16 @@ def savecashbon():
     if request.method == 'POST':
         return BonContoller.savetansaksi()
 
+@app.route('/api/processcredit', methods=['POST'])
+def processcredit():
+    if request.method == 'POST':
+        return CreditController.processcredit()
+
 @app.route('/api/detail_credit', methods=['GET'])
 def detail_credit():
     if request.method == 'GET':
         return CreditController.detail_credit()
+
 
 
 @app.route('/api/credit_list/<nik>', methods=['GET'])
@@ -119,6 +125,16 @@ def savingmain():
         return SavingMainController.index()
     if request.method == 'POST':
         return SavingMainController.save()
+
+@app.route('/api/savemainupload', methods=['POST'])
+def savemainup():
+    if request.method == 'POST':
+        return SavingMainController.upload()
+
+@app.route('/api/createsaving', methods=['POST'])
+def createsaving():
+    if request.method == 'POST':
+        return SavingMainController.createsaving()
 
 
 

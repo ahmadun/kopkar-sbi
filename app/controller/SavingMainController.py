@@ -16,11 +16,12 @@ def index():
             result = savings_schema.dump(data)
             return jsonify(result)
         else:
+
+
             data = Savings.query.join(Users, Savings.nik==Users.nik) \
             .add_columns(Savings.nik, Users.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.nik==nik,Savings.period==period)
             result = users_schema.dump(data)
             return jsonify(result)
-
     except Exception as e:
         print(e)
 
@@ -33,8 +34,7 @@ def total_saving(nik):
             func.sum(Savings.save_volu).label("save_volu")).filter(Savings.nik==nik)
 
         return total
-
-        
+      
     except Exception as e:
         print(e)
 
@@ -54,7 +54,30 @@ def save():
         return response.success(True, 'Sucesfully Add Data')
 
 
-              
+    except Exception as e:
+        print(e)
 
+
+def upload():
+    try:       
+        req = request.get_json(force=True, silent=True)
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        stream = []
+        for i in req:
+             stream.append((i['nik'],i['period'],i['date_save'],i['save_mand'],i['save_main'],i['save_volu'],'220021',now))      
+        db.engine.execute('insert into savings (nik,period,date_save,save_mand,save_main,save_volu,created_by,created_at) VALUES {}'.format(str(stream)[1:-1]))
+        db.session.commit()
+        return response.success(True, 'Sucesfully Add Data')
+    except Exception as e:
+        print(e)
+
+
+def createsaving():
+    try:
+        created_by = request.json.get('created_by')
+        month = request.json.get('month')
+        db.engine.execute("exec spCreateSaving " + str(created_by) + ',' +  str(month))
+        db.session.commit()
+        return response.success(True, 'Sucessfully Create Data')
     except Exception as e:
         print(e)

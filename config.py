@@ -13,6 +13,7 @@ class Config(object):
                                    SERVER=AHMADUN;\
                                    DATABASE=kopkar-sbi;\
                                    UID=sa;PWD=ahmadun")
-    SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
+    SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s&autocommit=true" % params
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+    autocommit = True

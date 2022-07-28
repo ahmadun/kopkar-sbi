@@ -85,3 +85,19 @@ def pinjaman_prt_total(nik):
         
     except Exception as e:
         print(e)
+
+
+
+def processcredit():
+    try:       
+        req = request.get_json(force=True, silent=True)
+        print(req)
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        stream = []
+        for i in req:
+             stream.append((i['month'],i['nik'],i['mand'].replace("Rp", "").replace(",",""),i['interest'].replace("Rp", "").replace(",",""),i['total'].replace("Rp", "").replace(",",""),i['remarks'],'220021',now,0))      
+        db.engine.execute('insert into creditregs (month,nik,credit_main,credit_interest,credit_total,remarks,created_by,created_at,status) VALUES {}'.format(str(stream)[1:-1]))
+        db.session.commit()
+        return response.success(True, 'Sucesfully Add Data')
+    except Exception as e:
+        print(e)

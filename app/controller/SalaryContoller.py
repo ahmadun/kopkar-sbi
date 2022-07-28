@@ -64,7 +64,7 @@ def upload():
         for i in req:
              stream.append((i['nik'],i['basic_salary'],i['last_salary'],i['last_month_pay'],i['created_by'],now))
        
-        print('insert into salarys (nik,basic_salary,last_salary,last_month_pay,created_by,created_at) VALUES {}'.format(str(stream)[1:-1]))
+        db.engine.execute('insert into salarys (nik,basic_salary,last_salary,last_month_pay,created_by,created_at) VALUES {}'.format(str(stream)[1:-1]))
         db.session.commit()
             
 
