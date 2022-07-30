@@ -15,5 +15,5 @@ migrate = Migrate(app, db)
 jwt = JWTManager(app)
 cors = CORS(app)
 
-from app.model import users,salarys,creditregs,creditkons,creditprts,savings,saving_masters
+from app.model import users,salarys,creditregs,creditkons,creditprts,savings,saving_masters,credits
 from app import routes

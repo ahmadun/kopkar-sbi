@@ -7,6 +7,7 @@ from flask import request, jsonify,abort,json
 from app.model.creditregs import Creditregs,creditregs_schema
 from app.model.creditkons import Creditkons,creditkons_schema
 from app.model.creditprts import Creditprts,creditprts_schema
+from app.model.credits import Credits,credits_schema
 
 
 def index(nik):
@@ -88,16 +89,65 @@ def pinjaman_prt_total(nik):
 
 
 
-def processcredit():
+def processcredit(code):
+    try:      
+        if(code=='reg'):
+            creditreg(request.get_json(force=True, silent=True))
+            return response.success(True, 'Sucesfully Add Data')
+        elif(code=='kon'):
+            creditkons(request.get_json(force=True, silent=True))
+            return response.success(True, 'Sucesfully Add Data')
+        elif(code=='prt'):
+            creditprt(request.get_json(force=True, silent=True))
+            return response.success(True, 'Sucesfully Add Data')
+      
+    except Exception as e:
+        print(e)
+
+
+def creditreg(req):
     try:       
-        req = request.get_json(force=True, silent=True)
-        print(req)
         now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
         stream = []
         for i in req:
              stream.append((i['month'],i['nik'],i['mand'].replace("Rp", "").replace(",",""),i['interest'].replace("Rp", "").replace(",",""),i['total'].replace("Rp", "").replace(",",""),i['remarks'],'220021',now,0))      
         db.engine.execute('insert into creditregs (month,nik,credit_main,credit_interest,credit_total,remarks,created_by,created_at,status) VALUES {}'.format(str(stream)[1:-1]))
         db.session.commit()
+       
+    except Exception as e:
+        print(e)
+
+def creditkons(req):
+    try:       
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        stream = []
+        for i in req:
+             stream.append((i['month'],i['nik'],i['mand'].replace("Rp", "").replace(",",""),i['interest'].replace("Rp", "").replace(",",""),i['total'].replace("Rp", "").replace(",",""),i['remarks'],i['code'],'220021',now,0))      
+        db.engine.execute('insert into creditkons (month,nik,credit_main,credit_interest,credit_total,remarks,code,created_by,created_at,status) VALUES {}'.format(str(stream)[1:-1]))
+        db.session.commit()
         return response.success(True, 'Sucesfully Add Data')
     except Exception as e:
         print(e)
+
+def creditprt(req):
+    try:       
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        stream = []
+        for i in req:
+             stream.append((i['month'],i['nik'],i['mand'].replace("Rp", "").replace(",",""),i['remarks'],'220021',now,0))      
+        db.engine.execute('insert into creditprts (month,nik,credit,remarks,created_by,created_at,status) VALUES {}'.format(str(stream)[1:-1]))
+        db.session.commit()
+        return response.success(True, 'Sucesfully Add Data')
+    except Exception as e:
+        print(e)
+
+
+def creditsmst():
+    try:
+        data = Credits.query.all();    
+        result= credits_schema.dump(data)      
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+
+

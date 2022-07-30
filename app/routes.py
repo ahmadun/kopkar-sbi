@@ -75,7 +75,8 @@ def savecashbon():
 @app.route('/api/processcredit', methods=['POST'])
 def processcredit():
     if request.method == 'POST':
-        return CreditController.processcredit()
+        code = request.args.get('code')
+        return CreditController.processcredit(code)
 
 @app.route('/api/detail_credit', methods=['GET'])
 def detail_credit():
@@ -135,6 +136,11 @@ def savemainup():
 def createsaving():
     if request.method == 'POST':
         return SavingMainController.createsaving()
+
+@app.route('/api/creditsmst', methods=['GET'])
+def creditsmst():
+    if request.method == 'GET':
+        return CreditController.creditsmst()
 
 
 
