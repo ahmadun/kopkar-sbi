@@ -8,6 +8,8 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
 app=Flask(__name__)
+app.run(host='0.0.0.0')
+
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
