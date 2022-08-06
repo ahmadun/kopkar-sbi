@@ -1,3 +1,4 @@
+from calendar import month
 from datetime import datetime
 from marshal import dump
 
@@ -12,9 +13,9 @@ from app.model.credits import Credits,credits_schema
 
 def index(nik):
     try:
-        data=db.engine.execute("exec spListCredit @nik=?", (nik))
+        data=db.engine.execute("call spListCredit ("+nik+")")
         result=json.dumps([dict(row) for row in data.mappings()])
-        return response.success(json.loads(result), 'Sucessfully Add Data')
+        return response.success(json.loads(result), 'Sucessfully Get Data')
     except Exception as e:
         print(e)
 
@@ -29,7 +30,8 @@ def detail_credit():
             response = {'data':list, 'total':total}
             return jsonify(response)
         elif code=='KON':
-            data = Creditkons.query.filter(Creditkons.nik == nik,Creditkons.status == 0)
+            data = Creditkons.query.join(Credits, Creditkons.code==Credits.id).add_columns(Creditkons.nik,Creditkons.month,Creditkons.credit_main, Creditkons.credit_interest, Creditkons.credit_total, Creditkons.code,Creditkons.remarks,Credits.desc) \
+                .filter(Creditkons.nik==nik,Creditkons.nik==nik,Creditregs.status == 0)
             list= creditkons_schema.dump(data)      
             total= creditkons_schema.dump(pinjaman_kons_total(nik))
             response = {'data':list, 'total':total}
@@ -52,7 +54,7 @@ def pinjaman_reg_total(nik):
             func.count(Creditregs.month).label("month"),
             func.sum(Creditregs.credit_main).label("credit_main"),
             func.sum(Creditregs.credit_interest).label("credit_interest"),
-            func.sum(Creditregs.credit_interest).label("credit_total")).filter(Creditregs.nik == nik,Creditregs.status == 0)
+            func.sum(Creditregs.credit_total).label("credit_total")).filter(Creditregs.nik == nik,Creditregs.status == 0)
 
         return total
 
@@ -66,7 +68,7 @@ def pinjaman_kons_total(nik):
             func.count(Creditkons.month).label("month"),
             func.sum(Creditkons.credit_main).label("credit_main"),
             func.sum(Creditkons.credit_interest).label("credit_interest"),
-            func.sum(Creditkons.credit_interest).label("credit_total")).filter(Creditkons.nik == nik,Creditkons.status == 0)
+            func.sum(Creditkons.credit_total).label("credit_total")).filter(Creditkons.nik == nik,Creditkons.status == 0)
 
         return total
 
@@ -151,3 +153,59 @@ def creditsmst():
         print(e)
 
 
+def updatecredit():
+    try:
+       
+        nik = request.json.get('nik')
+        month = request.json.get('month')
+
+        print(request.json.get('credit_main'))
+        credit= request.json.get('credit')
+        credit_main = request.json.get('credit_main')
+        credit_interest = request.json.get('credit_interest')
+        credit_total = request.json.get('credit_total')
+        remarks = request.json.get('remarks')
+        updated_by = request.json.get('updated_by')
+        updated_at = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+        code = request.args.get('code')
+        if code=='REG':  
+            data = Creditregs.query.filter_by(nik=nik,month=month).first()
+            data.credit_main=credit_main
+            data.credit_interest=credit_interest
+            data.credit_total=credit_total
+            data.remarks=remarks
+            data.updated_by=updated_by
+            data.updated_at=updated_at
+            db.session.commit()
+            return response.success(True, 'Sucesfully Update Data')       
+        elif code=='KON':
+            data = Creditkons.query.filter_by(nik=nik,month=month).first()
+            data.credit_main=credit_main
+            data.credit_interest=credit_interest
+            data.credit_total=credit_total
+            data.remarks=remarks
+            data.updated_by=updated_by
+            data.updated_at=updated_at
+            db.session.commit()
+            return response.success(True, 'Sucesfully Update Data')  
+        elif code=='PRT':
+            data = Creditprts.query.filter_by(nik=nik,month=month).first()
+            data.credit=credit
+            data.remarks=remarks
+            data.updated_by=updated_by
+            data.updated_at=updated_at
+            db.session.commit()
+            return response.success(True, 'Sucesfully Update Data')     
+             
+
+    except Exception as e:
+        print(e)
+
+def listcreditall():
+    try:
+        data=db.engine.execute("call spListCreditAll")
+        result=json.dumps([dict(row) for row in data.mappings()])
+        return response.success(json.loads(result), 'Sucessfully Get Data')
+    except Exception as e:
+        print(e)

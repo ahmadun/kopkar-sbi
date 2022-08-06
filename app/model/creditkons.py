@@ -21,6 +21,6 @@ class Creditkons(db.Model):
   
 class CreditkonsSchema(ma.Schema):
     class Meta:
-        fields = ('month','nik','credit_main','credit_interest','credit_total','remarks','code','status')
+        fields = ('month','nik','credit_main','credit_interest','credit_total','remarks','code','desc','status')
 creditkon_schema = CreditkonsSchema()
 creditkons_schema = CreditkonsSchema(many=True)

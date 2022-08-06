@@ -15,10 +15,12 @@ class Savings(db.Model):
 
     def __repr__(self):
         return '<Savings {}>'.format(self.name)
+    
+
 
   
 class SavingsSchema(ma.Schema):
     class Meta:
-        fields = ('nik','period','date_save','save_mand','save_main','save_volu','name')
+        fields = ('nik','period','date_save','save_mand','save_main','save_volu','save_total','name')
 saving_schema = SavingsSchema()
 savings_schema = SavingsSchema(many=True)

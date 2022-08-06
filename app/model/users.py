@@ -27,6 +27,6 @@ class Users(db.Model):
 
 class UsersSchema(ma.Schema):
     class Meta:
-        fields = ('nik','name','no_hp','email','role')
+        fields = ('nik','name','no_hp','email','role','email_verified_at')
 user_schema = UsersSchema()
 users_schema = UsersSchema(many=True)

@@ -1,4 +1,3 @@
-from asyncio.proactor_events import _ProactorBaseWritePipeTransport
 from sqlalchemy import true
 from app.model.users import Users,users_schema
 
@@ -14,7 +13,6 @@ from datetime import timedelta
 def checkmember():
     try:
         nik = request.args.get('nik')
-        print(nik)
         if (nik!=""):
             data = Users.query.filter(Users.nik==nik)       
             result = users_schema.dump(data)
@@ -39,13 +37,23 @@ def save():
         created_by = request.json.get('created_by')
         now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
+        check = Users.query.filter(Users.nik == nik).first()
+        if (check is None):
+            try:
+                data = Users(nik=nik,name=name,role=role,no_hp=no_hp,email=email,created_by=created_by,created_at=now)
+                data.setPassword(password)
+                db.session.add(data)
+                db.session.commit()
+                return response.success(True, 'Sucessfully Add Data')
+            except Exception as e:
+                print(e)
+        else:
+            return response.success(False, 'Data is Exist')
 
-        data = Users(nik=nik,name=name,role=role,no_hp=no_hp,email=email,created_by=created_by,created_at=now)
-        data.setPassword(password)
-        db.session.add(data)
-        db.session.commit()
 
-        return response.success([], 'Sucessfully Add Data')
+        
+
+        return response.success(True, 'Sucessfully Add Data')
     except Exception as e:
         print(e)
 
@@ -86,6 +94,31 @@ def updateuserinfo():
         data.email = email
         data.updated_by  = updated_by
         data.updated_at  = now
+        db.session.commit()
+      
+        return response.success(True, 'Sucessfully Change Profile')
+    except Exception as e:
+        print(e)
+
+
+def usersapprove():
+    try:
+        nik = request.json.get('nik')
+        updated_by = request.json.get('updated_by')
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        approve = request.json.get('approve')
+
+        data =Users.query.filter_by(nik=nik).first()
+        if(approve==True):
+            data.updated_by  = updated_by
+            data.email_verified_at  = now
+            data.updated_at  = now
+        else:
+            data.updated_by  = updated_by
+            data.email_verified_at  = None
+            data.updated_at  = now
+   
+        
         db.session.commit()
       
         return response.success(True, 'Sucessfully Change Profile')

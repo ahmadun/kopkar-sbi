@@ -1,5 +1,6 @@
 from datetime import datetime
 from marshal import dump
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from app import response,db
 from flask import request, jsonify,abort,json
@@ -76,7 +77,8 @@ def createsaving():
     try:
         created_by = request.json.get('created_by')
         month = request.json.get('month')
-        db.engine.execute("exec spCreateSaving " + str(created_by) + ',' +  str(month))
+  
+        db.session.execute("CALL spCreateSaving("+month+", "+created_by+")")   
         db.session.commit()
         return response.success(True, 'Sucessfully Create Data')
     except Exception as e:

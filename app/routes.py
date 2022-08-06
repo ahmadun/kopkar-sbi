@@ -1,9 +1,7 @@
-import imp
-
 from flask_cors import cross_origin
 from app import app,response
-from app.controller import UserContoller,CashContoller,BonContoller,CreditController,SalaryContoller,SavingContoller,SavingMasController,SavingMainController
-from flask import request
+from app.controller import UserContoller,CashContoller,BonContoller,CreditController,SalaryContoller,SavingContoller,SavingMasController,SavingMainController,CreditHisController
+from flask import render_template, request
 from flask import jsonify
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
@@ -19,6 +17,12 @@ def users():
         return UserContoller.updateuserinfo()
     else:
         return UserContoller.save()
+
+@app.route('/api/usersapprove', methods=['PUT'])
+def usersapprove():
+    if request.method == 'PUT':
+        return UserContoller.usersapprove()
+
 
 
 @app.route('/api/users/pwd', methods=['PUT'])
@@ -143,4 +147,24 @@ def creditsmst():
         return CreditController.creditsmst()
 
 
+@app.route('/api/updatecredit', methods=['PUT'])
+def updatecredit():
+    if request.method == 'PUT':
+        return CreditController.updatecredit()
+
+
+@app.route('/api/sendsaving/<nik>',methods=['POST'])  
+def sendsaving(nik):  
+    if request.method == 'POST':
+        return SavingContoller.emailsend(nik)
+
+@app.route('/api/listcreditall',methods=['GET'])  
+def listcreditall():  
+    if request.method == 'GET':
+        return CreditController.listcreditall()
+
+@app.route('/api/credithistory',methods=['POST'])  
+def credithistory():  
+    if request.method == 'POST':
+        return CreditHisController.save()
 
