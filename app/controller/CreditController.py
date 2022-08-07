@@ -31,7 +31,7 @@ def detail_credit():
             return jsonify(response)
         elif code=='KON':
             data = Creditkons.query.join(Credits, Creditkons.code==Credits.id).add_columns(Creditkons.nik,Creditkons.month,Creditkons.credit_main, Creditkons.credit_interest, Creditkons.credit_total, Creditkons.code,Creditkons.remarks,Credits.desc) \
-                .filter(Creditkons.nik==nik,Creditkons.nik==nik,Creditregs.status == 0)
+                .filter(Creditkons.nik==nik,Creditkons.nik==nik,Creditkons.status == 0)
             list= creditkons_schema.dump(data)      
             total= creditkons_schema.dump(pinjaman_kons_total(nik))
             response = {'data':list, 'total':total}

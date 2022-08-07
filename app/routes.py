@@ -32,6 +32,11 @@ def pwd():
     else:
         return UserContoller.save()
 
+@app.route('/api/users/chagenpwduser', methods=['POST'])
+def chagenpwduser():
+    if request.method == 'POST':
+        return UserContoller.chagenpwduser()
+
 @app.route('/api/login', methods=['POST'])
 def login():
 

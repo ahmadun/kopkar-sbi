@@ -75,6 +75,30 @@ def changepwd():
     except Exception as e:
         print(e)
 
+def chagenpwduser():
+    try:
+        nik = request.json.get('nik')
+        password = request.json.get('password')
+        passwordold = request.json.get('passwordold')
+        updated_by = request.json.get('created_by')   
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+        user = Users.query.filter_by(nik=nik).first()
+        if not user.checkPassword(passwordold):
+            return response.success(False, 'Password Lama Salah')
+
+
+        data =Users.query.filter_by(nik=nik).first()
+        data.password=generate_password_hash(password)
+        data.updated_by  = updated_by
+        data.updated_at  = now
+        db.session.commit()
+        return response.success(True, 'Sucessfully Change Password')
+            
+
+    except Exception as e:
+        print(e)
+
 def updateuserinfo():
     try:
         nik = request.json.get('nik')

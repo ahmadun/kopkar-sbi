@@ -40,12 +40,12 @@ def total_saving(nik):
 def emailsend(nik):
     try:  
         email = request.json.get('email')
-        print(email)
         data = Savings.query.filter(Savings.nik == nik)  
         total=total_saving(nik)
         htmls=render_template("saving-pdftemplate.html",list=data,total=total)
-        config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
-        pdfdata = pdfkit.from_string(htmls, configuration=config)
+        # config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+        # pdfdata = pdfkit.from_string(htmls, configuration=config)
+        pdfdata = pdfkit.from_string(htmls)
         
         msg = Message('DATA TABUNGAN '+nik+'', sender = 'ahmadun.jambi@gmail.com', recipients=[email])  
         msg.html=render_template("saving_emailbody.html",nik=nik)
