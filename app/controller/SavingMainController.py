@@ -5,7 +5,7 @@ from sqlalchemy import func
 from app import response,db
 from flask import request, jsonify,abort,json
 from app.model.savings import Savings,savings_schema
-from app.model.users import Users,users_schema
+from app.model.members import Members,members_schema
 
 
 def index():
@@ -13,15 +13,15 @@ def index():
         nik = request.args.get('nik')
         period = request.args.get('period')
         if nik=='':
-            data = Savings.query.join(Users, Savings.nik==Users.nik).add_columns(Savings.nik, Users.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.period==period)
+            data = Savings.query.join(Members, Savings.nik==Members.nik).add_columns(Savings.nik, Members.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.period==period)
             result = savings_schema.dump(data)
             return jsonify(result)
         else:
 
 
-            data = Savings.query.join(Users, Savings.nik==Users.nik) \
-            .add_columns(Savings.nik, Users.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.nik==nik,Savings.period==period)
-            result = users_schema.dump(data)
+            data = Savings.query.join(Members, Savings.nik==Members.nik) \
+            .add_columns(Savings.nik, Members.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.nik==nik,Savings.period==period)
+            result = members_schema.dump(data)
             return jsonify(result)
     except Exception as e:
         print(e)

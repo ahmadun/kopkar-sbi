@@ -1,17 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
     <title>Laravel 7 PDF Example</title>
-    <style>
-        .styled-table {
-            border: 1px solid black;
-            border-collapse: collapse;
-            font-size: 0.9em;
-            font-family: sans-serif;
-        }
-    </style>
    
 </head>
 
@@ -20,10 +12,8 @@
     <div style="margin: 25px 0;">
         <div style="width:100%; margin: auto; text-align: center; margin-bottom: 20px; font-weight: bolder;">DATA
             SIMPANAN</div>
-
-            <p><b>{{list[0].nik}}</b></p>
             
-        <table class="styled-table" style="width:100%">
+        <table style="width:100%">
             <thead>
                 <tr style="background-color: cadetblue; height: 40px;">
                     <th style="text-align:left;">Tanggal Penyimpanan</th>
@@ -39,7 +29,7 @@
                         <td style="text-align:left;">{{row.save_mand}}</td>
                         <td style="text-align:left;">{{row.save_main}}</td>
                     </tr>
-                {% endfor %} 
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -49,25 +39,25 @@
                 <tr>
                     <th style="text-align:left;">Simpanan Pokok</th>
                     <td>:</td>
-                    <td>{{ total[0].save_main }}</td>
+                    <td>{{total[0].save_main}}</td>
  
                 </tr>
                 <tr>
                     <th style="text-align:left;">Total Simpanan Wajib</th>
                     <td>:</td>
-                    <td>{{ total[0].save_mand }}</td>
+                    <td>{{total[0].save_mand}}</td>
 
                 </tr>
                 <tr>
                     <th style="text-align:left;">Total Simpanan Sukarela</th>
                     <td>:</td>
-                    <td>{{ total[0].save_volu }}</td>
+                    <td>{{total[0].save_volu}}</td>
 
                 </tr>
                 <tr>
                     <th style="text-align:left;">Total</th>
                     <td>:</td>
-                    <td>{{ total[0].save_volu+total[0].save_main+total[0].save_mand}}</td>
+                    <td>{{total[0].save_volu+total[0].save_main+total[0].save_mand}}</td>
         
                 </tr>
             </tbody>

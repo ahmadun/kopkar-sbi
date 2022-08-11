@@ -10,6 +10,7 @@ from flask_mail import *
 
 
 app=Flask(__name__,template_folder='template')
+app.static_folder = 'static'
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -25,5 +26,5 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True  
 mail = Mail(app)  
 
-from app.model import users,salarys,creditregs,creditkons,creditprts,savings,saving_masters,credits,credit_history
+from app.model import users,salarys,creditregs,creditkons,creditprts,savings,saving_masters,credits,credit_history,members
 from app import routes

@@ -1,5 +1,6 @@
 from sqlalchemy import true
 from app.model.users import Users,users_schema
+from app.model.members import Members,members_schema
 
 from datetime import datetime
 from app import response,db
@@ -11,6 +12,24 @@ from datetime import timedelta
 
 
 def checkmember():
+    try:
+        nik = request.args.get('nik')
+        if (nik!=""):
+            data = Members.query.filter(Members.nik==nik)       
+            result = members_schema.dump(data)
+            return jsonify(result)
+        else:
+            data = Members.query.all()      
+            result = members_schema.dump(data)
+            return jsonify(result)
+
+
+    except Exception as e:
+        print(e)
+
+        
+
+def checkuser():
     try:
         nik = request.args.get('nik')
         if (nik!=""):

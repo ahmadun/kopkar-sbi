@@ -1,3 +1,4 @@
+from cgi import print_form
 from cgitb import html
 from datetime import datetime
 from marshal import dump
@@ -25,9 +26,9 @@ def index(nik):
 def total_saving(nik):
     try:   
         total = db.session.query(
-            func.sum(Savings.save_mand).label("save_mand"),
-            func.sum(Savings.save_main).label("save_main"),
-            func.sum(Savings.save_volu).label("save_volu")).filter(Savings.nik==nik)
+            func.ifnull(func.sum(Savings.save_mand),0).label("save_mand"),
+            func.ifnull(func.sum(Savings.save_main),0).label("save_main"),
+            func.ifnull(func.sum(Savings.save_volu),0).label("save_volu")).filter(Savings.nik==nik)
 
         return total
 
@@ -40,18 +41,20 @@ def total_saving(nik):
 def emailsend(nik):
     try:  
         email = request.json.get('email')
-        data = Savings.query.filter(Savings.nik == nik)  
-        total=total_saving(nik)
-        htmls=render_template("saving-pdftemplate.html",list=data,total=total)
-        # config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
-        # pdfdata = pdfkit.from_string(htmls, configuration=config)
-        pdfdata = pdfkit.from_string(htmls)
-        
-        msg = Message('DATA TABUNGAN '+nik+'', sender = 'ahmadun.jambi@gmail.com', recipients=[email])  
-        msg.html=render_template("saving_emailbody.html",nik=nik)
-        msg.attach('List Simpanan '+nik+'.pdf', 'application/pdf', pdfdata)
-        mail.send(msg)    
-        return response.success(True, 'Sucesfully Add Data')
+        data = Savings.query.filter(Savings.nik == nik)    
+        if(data.count()>0):      
+            totals=total_saving(nik)
+            htmls=render_template('saving_pdftemplate.html',list=data,total=totals)
+            config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+            pdfdata = pdfkit.from_string(htmls, configuration=config)
+            msg = Message('DATA TABUNGAN '+nik+'', sender = 'ahmadun.jambi@gmail.com',recipients=[email])
+            msg.html=render_template('saving_emailbody.html',nik=nik)
+            msg.attach('Daftar Simpanan '+nik+'.pdf', 'application/pdf', pdfdata)
+            mail.send(msg)
+            return response.success(True, 'Sucesfully Add Data')
+        else:
+            return response.success(True, 'No record Data')
+   
     except Exception as e:
         print(e)
 

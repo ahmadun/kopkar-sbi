@@ -23,15 +23,21 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-    # HOST = '127.0.0.1:3307'
+
+    # HOST = '156.67.219.145:3306'
+    # HOST = str(os.environ.get("DB_HOST"))
+    # DATABASE = str(os.environ.get("DB_DATABASE"))
+    # USERNAME = str(os.environ.get("DB_USERNAME"))
+    # PASSWORD = str(os.environ.get("DB_PASSWORD"))
     HOST = '156.67.219.145:3306'
-    HOST = str(os.environ.get("DB_HOST"))
-    DATABASE = str(os.environ.get("DB_DATABASE"))
-    USERNAME = str(os.environ.get("DB_USERNAME"))
-    PASSWORD = str(os.environ.get("DB_PASSWORD"))
-    # DATABASE = 'kopkarsbi'
-    # USERNAME ='root'
-    # PASSWORD ='ahmadun'
+    # HOST = str(os.environ.get("DB_HOST"))
+    # DATABASE = str(os.environ.get("DB_DATABASE"))
+    # USERNAME = str(os.environ.get("DB_USERNAME"))
+    # PASSWORD = str(os.environ.get("DB_PASSWORD"))
+    DATABASE = 'kopkarsbi'
+    USERNAME ='root'
+    PASSWORD ='Maulana123'
+
 
     JWT_SECRET_KEY = str(os.environ.get("JWT_SECRET"))
     

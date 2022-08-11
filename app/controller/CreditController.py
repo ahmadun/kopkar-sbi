@@ -21,25 +21,26 @@ def index(nik):
 
 def detail_credit():
     try:
+        sts = request.args.get('sts')
         nik = request.args.get('nik')
         code = request.args.get('code')
         if code=='REG':  
-            data = Creditregs.query.filter(Creditregs.nik == nik,Creditregs.status == 0)
+            data = Creditregs.query.filter(Creditregs.nik == nik,Creditregs.status == sts)
             list= creditregs_schema.dump(data)      
-            total= creditregs_schema.dump(pinjaman_reg_total(nik))
+            total= creditregs_schema.dump(pinjaman_reg_total(nik,sts))
             response = {'data':list, 'total':total}
             return jsonify(response)
         elif code=='KON':
             data = Creditkons.query.join(Credits, Creditkons.code==Credits.id).add_columns(Creditkons.nik,Creditkons.month,Creditkons.credit_main, Creditkons.credit_interest, Creditkons.credit_total, Creditkons.code,Creditkons.remarks,Credits.desc) \
-                .filter(Creditkons.nik==nik,Creditkons.nik==nik,Creditkons.status == 0)
+                .filter(Creditkons.nik==nik,Creditkons.nik==nik,Creditkons.status == sts)
             list= creditkons_schema.dump(data)      
-            total= creditkons_schema.dump(pinjaman_kons_total(nik))
+            total= creditkons_schema.dump(pinjaman_kons_total(nik,sts))
             response = {'data':list, 'total':total}
             return jsonify(response)
         elif code=='PRT':
-            data = Creditprts.query.filter(Creditprts.nik == nik,Creditprts.status == 0)
+            data = Creditprts.query.filter(Creditprts.nik == nik,Creditprts.status == sts)
             list= creditprts_schema.dump(data)      
-            total= creditprts_schema.dump(pinjaman_prt_total(nik))
+            total= creditprts_schema.dump(pinjaman_prt_total(nik,sts))
             response = {'data':list, 'total':total}
             return jsonify(response)
    
@@ -47,14 +48,14 @@ def detail_credit():
         print(e)
 
 
-def pinjaman_reg_total(nik):
+def pinjaman_reg_total(nik,sts):
     try:
         
         total = db.session.query(
             func.count(Creditregs.month).label("month"),
             func.sum(Creditregs.credit_main).label("credit_main"),
             func.sum(Creditregs.credit_interest).label("credit_interest"),
-            func.sum(Creditregs.credit_total).label("credit_total")).filter(Creditregs.nik == nik,Creditregs.status == 0)
+            func.sum(Creditregs.credit_total).label("credit_total")).filter(Creditregs.nik == nik,Creditregs.status == sts)
 
         return total
 
@@ -62,13 +63,13 @@ def pinjaman_reg_total(nik):
     except Exception as e:
         print(e)
 
-def pinjaman_kons_total(nik):
+def pinjaman_kons_total(nik,sts):
     try:      
         total = db.session.query(
             func.count(Creditkons.month).label("month"),
             func.sum(Creditkons.credit_main).label("credit_main"),
             func.sum(Creditkons.credit_interest).label("credit_interest"),
-            func.sum(Creditkons.credit_total).label("credit_total")).filter(Creditkons.nik == nik,Creditkons.status == 0)
+            func.sum(Creditkons.credit_total).label("credit_total")).filter(Creditkons.nik == nik,Creditkons.status == sts)
 
         return total
 
@@ -77,11 +78,11 @@ def pinjaman_kons_total(nik):
         print(e)
 
 
-def pinjaman_prt_total(nik):
+def pinjaman_prt_total(nik,sts):
     try:      
         total = db.session.query(
             func.count(Creditprts.month).label("month"),
-            func.sum(Creditprts.credit).label("credit")).filter(Creditprts.nik == nik,Creditprts.status == 0)
+            func.sum(Creditprts.credit).label("credit")).filter(Creditprts.nik == nik,Creditprts.status == sts)
 
         return total
 
@@ -94,14 +95,33 @@ def pinjaman_prt_total(nik):
 def processcredit(code):
     try:      
         if(code=='reg'):
-            creditreg(request.get_json(force=True, silent=True))
-            return response.success(True, 'Sucesfully Add Data')
+            data=request.get_json(force=True, silent=True)
+            nik=(data[0]["nik"])
+            check = Creditregs.query.filter_by(nik=nik,status=0).first()
+            if not check:
+                creditreg(data)
+                return response.success(True, 'Sucesfully Add Data')
+            else:
+                return response.success(False, 'Credit Reguler masih Aktif !')
         elif(code=='kon'):
-            creditkons(request.get_json(force=True, silent=True))
-            return response.success(True, 'Sucesfully Add Data')
+            data=request.get_json(force=True, silent=True)
+            nik=(data[0]["nik"])
+            check = Creditkons.query.filter_by(nik=nik,status=0).first()
+            if not check:
+                creditkons(data)
+                return response.success(True, 'Sucesfully Add Data')
+            else:
+                return response.success(False, 'Credit Konsumptif masih Aktif !')
+         
         elif(code=='prt'):
-            creditprt(request.get_json(force=True, silent=True))
-            return response.success(True, 'Sucesfully Add Data')
+            data=request.get_json(force=True, silent=True)
+            nik=(data[0]["nik"])
+            check = Creditprts.query.filter_by(nik=nik,status=0).first()
+            if not check:
+                creditprt(data)
+                return response.success(True, 'Sucesfully Add Data')
+            else:
+                return response.success(False, 'Credit PRT masih Aktif !')
       
     except Exception as e:
         print(e)

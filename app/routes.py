@@ -1,6 +1,6 @@
 from flask_cors import cross_origin
 from app import app,response
-from app.controller import UserContoller,CashContoller,BonContoller,CreditController,SalaryContoller,SavingContoller,SavingMasController,SavingMainController,CreditHisController
+from app.controller import UserContoller,CashContoller,BonContoller,CreditController,SalaryContoller,SavingContoller,SavingMasController,SavingMainController,CreditHisController,MemberContoller
 from flask import render_template, request
 from flask import jsonify
 from flask_jwt_extended import jwt_required
@@ -47,6 +47,11 @@ def login():
 def checkmember():
     if request.method == 'GET':
         return UserContoller.checkmember()
+
+@app.route('/api/checkuser', methods=['GET'])
+def checkuser():
+    if request.method == 'GET':
+        return UserContoller.checkuser()
 
 @app.route("/api/logout", methods=["POST"])
 def logout():
@@ -173,3 +178,12 @@ def credithistory():
     if request.method == 'POST':
         return CreditHisController.save()
 
+
+@app.route('/api/member', methods=['GET','POST','PUT'])
+def member():
+    if request.method == 'GET':
+        return MemberContoller.member()
+    elif request.method == 'POST':
+        return MemberContoller.save()
+    elif request.method == 'PUT':
+        return MemberContoller.update()

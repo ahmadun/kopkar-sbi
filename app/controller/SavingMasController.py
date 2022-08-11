@@ -6,19 +6,19 @@ from sqlalchemy import func
 from app import response,db
 from flask import request, jsonify,abort,json
 from app.model.saving_masters import Savings_masters,savings_masters_schema
-from app.model.users import Users,users_schema
+from app.model.members import Members,members_schema
 
 
 def index():
     try:
         nik = request.args.get('nik')
         if nik=='':
-            data = Savings_masters.query.join(Users, Savings_masters.nik==Users.nik).add_columns(Savings_masters.nik, Users.name, Savings_masters.save_main, Savings_masters.save_mand, Savings_masters.save_volu,Savings_masters.updated_at)
+            data = Savings_masters.query.join(Members, Savings_masters.nik==Members.nik).add_columns(Savings_masters.nik, Members.name, Savings_masters.save_main, Savings_masters.save_mand, Savings_masters.save_volu,Savings_masters.updated_at)
             result = savings_masters_schema.dump(data)
             return jsonify(result)
         else:
-            data = Savings_masters.query.join(Users, Savings_masters.nik==Users.nik) \
-            .add_columns(Savings_masters.nik, Users.name, Savings_masters.save_main, Savings_masters.save_mand, Savings_masters.save_volu,Savings_masters.updated_at).filter(Savings_masters.nik==nik)
+            data = Savings_masters.query.join(Members, Savings_masters.nik==Members.nik) \
+            .add_columns(Savings_masters.nik, Members.name, Savings_masters.save_main, Savings_masters.save_mand, Savings_masters.save_volu,Savings_masters.updated_at).filter(Savings_masters.nik==nik)
             result = savings_masters_schema.dump(data)
             return jsonify(result)
 

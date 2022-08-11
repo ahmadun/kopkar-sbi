@@ -6,19 +6,19 @@ from sqlalchemy import func
 from app import response,db
 from flask import request, jsonify,abort,json
 from app.model.salarys import Salarys,salarys_schema
-from app.model.users import Users,users_schema
+from app.model.members import Members,members_schema
 
 
 def index():
     try:
         nik = request.args.get('nik')
         if nik=='':
-            data = Salarys.query.join(Users, Salarys.nik==Users.nik).add_columns(Salarys.nik, Users.name, Salarys.basic_salary, Salarys.last_salary, Salarys.last_month_pay)
+            data = Salarys.query.join(Members, Salarys.nik==Members.nik).add_columns(Salarys.nik, Members.name, Salarys.basic_salary, Salarys.last_salary, Salarys.last_month_pay)
             result = salarys_schema.dump(data)
             return jsonify(result)
         else:
-            data = Salarys.query.join(Users, Salarys.nik==Users.nik) \
-            .add_columns(Salarys.nik, Users.name, Salarys.basic_salary, Salarys.last_salary, Salarys.last_month_pay).filter(Salarys.nik==nik)
+            data = Salarys.query.join(Members, Salarys.nik==Members.nik) \
+            .add_columns(Salarys.nik, Members.name, Salarys.basic_salary, Salarys.last_salary, Salarys.last_month_pay).filter(Salarys.nik==nik)
             result = salarys_schema.dump(data)
             return jsonify(result)
 
