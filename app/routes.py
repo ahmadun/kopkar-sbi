@@ -39,7 +39,6 @@ def chagenpwduser():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-
     if request.method == 'POST':
         return UserContoller.login()
 

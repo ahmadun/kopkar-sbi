@@ -1,14 +1,11 @@
-from sqlalchemy import true
 from app.model.users import Users,users_schema
 from app.model.members import Members,members_schema
-
-from datetime import datetime
+from datetime import datetime, timedelta
 from app import response,db
-from flask import request, jsonify,abort
+from flask import request, jsonify,abort,json
 from flask_jwt_extended import *
 from werkzeug.security import generate_password_hash
 
-from datetime import timedelta
 
 
 def checkmember():
@@ -22,13 +19,10 @@ def checkmember():
             data = Members.query.all()      
             result = members_schema.dump(data)
             return jsonify(result)
-
-
     except Exception as e:
         print(e)
 
-        
-
+    
 def checkuser():
     try:
         nik = request.args.get('nik')
