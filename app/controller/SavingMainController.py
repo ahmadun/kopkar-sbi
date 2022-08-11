@@ -17,11 +17,8 @@ def index():
             result = savings_schema.dump(data)
             return jsonify(result)
         else:
-
-
-            data = Savings.query.join(Members, Savings.nik==Members.nik) \
-            .add_columns(Savings.nik, Members.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.nik==nik,Savings.period==period)
-            result = members_schema.dump(data)
+            data = Savings.query.join(Members, Savings.nik==Members.nik).add_columns(Savings.nik, Members.name, Savings.date_save, Savings.save_main, Savings.save_mand,Savings.save_volu).filter(Savings.nik==nik,Savings.period==period)
+            result = savings_schema.dump(data)
             return jsonify(result)
     except Exception as e:
         print(e)
@@ -52,6 +49,30 @@ def save():
         data = Savings(nik=nik,period=period, date_save=date_save, save_volu=save_volu,created_by=created_by,created_at=created_at)
         db.session.add(data)
         db.session.commit()
+        return response.success(True, 'Sucesfully Add Data')
+
+
+    except Exception as e:
+        print(e)
+
+def update():
+    try:
+        nik = request.json.get('nik')
+        save_volu = request.json.get('save_volu')
+        save_main = request.json.get('save_main')
+        save_mand = request.json.get('save_mand')
+        created_by = request.json.get('created_by')
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+        data =Savings.query.filter_by(nik=nik).first()
+        data.save_volu =save_volu
+        data.save_main =save_main
+        data.save_mand =save_mand
+        data.updated_by  = created_by
+        data.updated_at  = now
+        db.session.commit()
+
+       
         return response.success(True, 'Sucesfully Add Data')
 
 

@@ -133,12 +133,14 @@ def saving(nik):
     if request.method == 'GET':
         return SavingContoller.index(nik)
 
-@app.route('/api/savingmain', methods=['GET','POST'])
+@app.route('/api/savingmain', methods=['GET','POST','PUT'])
 def savingmain():
     if request.method == 'GET':
         return SavingMainController.index()
     if request.method == 'POST':
         return SavingMainController.save()
+    if request.method == 'PUT':
+        return SavingMainController.update()
 
 @app.route('/api/savemainupload', methods=['POST'])
 def savemainup():
